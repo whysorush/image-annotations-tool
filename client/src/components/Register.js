@@ -96,7 +96,13 @@ const Register = () => {
   return (
     <Container maxWidth="sm">
       <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            mb: 3,
+          }}
+        >
           <SpeedIcon sx={{ mr: 1, fontSize: 40, color: 'primary.main' }} />
           <Typography component="h1" variant="h4" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
             WhySoRush
@@ -105,7 +111,16 @@ const Register = () => {
         <Typography component="h2" variant="h6" sx={{ mb: 3, color: 'text.secondary' }}>
           Create your account
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            mt: 1,
+            backgroundColor: '#f5f5f5',
+            p: 3,
+            borderRadius: 2
+          }}
+        >
           <TextField
             margin="normal"
             required

@@ -96,3 +96,11 @@ Contributions are welcome! Please open an issue or submit a pull request.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Screenshots
+Below are some screenshots of the application in use:
+
+![](screenshots/Dashboard.png.png)
+![](screenshots/login.png)
+![](screenshots/register.png)
+<!-- Repeat for each image inside the screenshots folder -->
