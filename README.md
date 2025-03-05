@@ -62,8 +62,9 @@ cd image-annotations-tool
    ```
 3. Create a `.env` file in the server directory and add your environment variables:
    ```plaintext
-   MONGODB_URI=your_mongodb_uri
+   MONGODB_URI=mongodb://localhost:27017/image-annotation
    JWT_SECRET=your_jwt_secret
+   PORT=5000
    ```
 4. Start the server:
    ```bash
