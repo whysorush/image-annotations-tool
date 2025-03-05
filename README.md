@@ -100,7 +100,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Screenshots
 Below are some screenshots of the application in use:
 
-![](screenshots/Dashboard.png.png)
+![](screenshots/Dashboard.png)
 ![](screenshots/login.png)
-![](screenshots/register.png)
+![](screenshots/Register.png)
 <!-- Repeat for each image inside the screenshots folder -->
