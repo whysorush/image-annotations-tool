@@ -18,7 +18,9 @@ import {
   NavigateBefore,
   FirstPage,
   LastPage,
-  Delete as DeleteIcon
+  Delete as DeleteIcon,
+  Download as DownloadIcon,
+  PhotoCamera as AnnotatedDownloadIcon
 } from '@mui/icons-material';
 import axios from 'axios';
 import ImageAnnotation from './ImageAnnotation';
@@ -132,6 +134,70 @@ const Dashboard = () => {
       dispatch(fetchImages());
     } catch (error) {
       showNotification('Error deleting image', 'error');
+    }
+  };
+
+  const handleDownloadImage = (path) => {
+    const link = document.createElement('a');
+    link.href = 'http://localhost:5000' + path;
+    link.download = path.split('/').pop(); 
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleDownloadAnnotatedImage = async (selectedImage) => {
+    try {
+      // 1. Fetch the image as a blob with CORS mode
+      const response = await fetch(`http://localhost:5000${selectedImage.path}`, {
+        mode: 'cors'
+      });
+      // 2. Turn it into a blob
+      const blob = await response.blob();
+
+      // 3. Create a blob URL for the image
+      const objectURL = URL.createObjectURL(blob);
+
+      // 4. Create a new Image object
+      const tempImage = new Image();
+      tempImage.crossOrigin = 'anonymous'; 
+      tempImage.src = objectURL;
+
+      tempImage.onload = () => {
+        // 5. Draw onto an offscreen canvas (full image size)
+        const canvas = document.createElement('canvas');
+        canvas.width = tempImage.width;
+        canvas.height = tempImage.height;
+        const ctx = canvas.getContext('2d');
+
+        // Draw the entire image
+        ctx.drawImage(tempImage, 0, 0, canvas.width, canvas.height);
+
+        // 6. Optionally draw bounding boxes on top
+        (selectedImage.boundingBoxes || []).forEach((box) => {
+          ctx.strokeStyle = '#FF0000';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([]);
+          ctx.strokeRect(box.x, box.y, box.width, box.height);
+
+          ctx.fillStyle = '#FF0000';
+          ctx.font = 'bold 14px Arial';
+          ctx.fillText(box.label || 'Box', box.x, box.y - 5);
+        });
+
+        // 7. Download the full snapshot (image + boxes)
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = `annotated_${selectedImage._id}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // 8. Release the blob URL
+        URL.revokeObjectURL(objectURL);
+      };
+    } catch (error) {
+      showNotification('Error downloading annotated image', 'error');
     }
   };
 
@@ -265,6 +331,22 @@ const Dashboard = () => {
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
+                    <Tooltip title="Download Original Image">
+                      <IconButton
+                        onClick={() => handleDownloadImage(images[currentImageIndex].path)}
+                        color="primary"
+                      >
+                        <DownloadIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Download Image with Annotations">
+                      <IconButton
+                        onClick={() => handleDownloadAnnotatedImage(images[currentImageIndex])}
+                        color="primary"
+                      >
+                        <AnnotatedDownloadIcon />
+                      </IconButton>
+                    </Tooltip>
                   </Box>
                 </Box>
               </Paper>
@@ -308,6 +390,7 @@ const Dashboard = () => {
                           >
                             <img
                               src={`http://localhost:5000${image.path}`}
+                              crossOrigin="anonymous"
                               alt={`Thumbnail ${index + 1}`}
                               loading="lazy"
                               style={{ 

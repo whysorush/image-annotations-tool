@@ -282,6 +282,18 @@ const ImageAnnotation = ({ image, onSave }) => {
     dispatch(updateStyle(newStyle));
   };
 
+  const handleDownloadAnnotatedImage = () => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'annotated_image.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   const StyleControls = () => (
     <Paper 
       elevation={2} 
@@ -423,13 +435,17 @@ const ImageAnnotation = ({ image, onSave }) => {
                 src={`http://localhost:5000${image.path}`}
                 alt="Annotation"
                 style={{ display: 'none' }}
-                onLoad={() => drawCanvas()}
+                onLoad={() => {
+                  if (canvasRef.current && imageRef.current) {
+                    canvasRef.current.width = imageRef.current.naturalWidth;
+                    canvasRef.current.height = imageRef.current.naturalHeight;
+                  }
+                  drawCanvas();
+                }}
               />
               <canvas
                 ref={canvasRef}
-                width={800}
-                height={600}
-                style={{ 
+                style={{
                   border: '2px solid #1976d2',
                   borderRadius: '10px',
                   cursor: isEditing ? 'crosshair' : 'default',
@@ -536,6 +552,30 @@ const ImageAnnotation = ({ image, onSave }) => {
                 Save Annotations
               </Button>
             </motion.div>
+
+            {/* <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.1 }}
+            >
+              <Button
+                variant="contained"
+                onClick={handleDownloadAnnotatedImage}
+                sx={{ 
+                  mt: 2,
+                  width: '100%',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(45deg, #1976d2, #2196f3)',
+                  boxShadow: '0 4px 15px rgba(33, 150, 243, 0.3)',
+                  transition: 'all 0.1s ease',
+                  '&:hover': {
+                    background: 'linear-gradient(45deg, #1565c0, #1976d2)'
+                  }
+                }}
+              >
+                Download Annotated Image
+              </Button>
+            </motion.div> */}
           </Box>
         </Box>
 
