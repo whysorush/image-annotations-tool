@@ -4,6 +4,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const imageRoutes = require('./routes/images');
+const fs = require('fs');
+const path = require('path');
 
 dotenv.config();
 const app = express();
@@ -11,6 +13,13 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir);
+}
+
 app.use('/uploads', express.static('uploads'));
 
 // Connect to MongoDB

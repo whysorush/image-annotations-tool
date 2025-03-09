@@ -3,6 +3,8 @@ const router = express.Router();
 const multer = require('multer');
 const auth = require('../middleware/auth');
 const Image = require('../models/Image');
+const fs = require('fs');
+const path = require('path');
 
 // Configure multer for image upload
 const storage = multer.diskStorage({
@@ -19,6 +21,12 @@ const upload = multer({ storage });
 // Upload image
 router.post('/upload', auth, upload.array('images'), async (req, res) => {
   try {
+    const uploadsDir = path.join(__dirname, '../uploads');
+
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
     const uploadedImages = [];
     
     for (const file of req.files) {
